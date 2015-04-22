@@ -1,6 +1,7 @@
 # ICU in a Bag - AutoCare
 
 List of hardware in the system
+
 1. Arduino Mega 2560    
 2. Mbed LPC1786         
 3. Touch Screen 3.2'    
