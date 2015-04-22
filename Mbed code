@@ -1,0 +1,77 @@
+#include "mbed.h"
+
+DigitalOut myled(LED1);
+DigitalOut statusLed(LED2);
+
+InterruptIn sensorPin(p5);
+
+// The hall-effect flow sensor outputs approximately 4.5 pulses per second per
+// litre/minute of flow.
+float calibrationFactor = 4.5;
+
+int pulseCount;
+
+float flowRate;
+unsigned int flowMilliLitres;
+unsigned long totalMilliLitres;
+
+unsigned long oldTime;
+unsigned int frac;
+Serial pc(USBTX, USBRX);//Display on Computer
+Timer TimeCounter;//debounce timer
+void pulseCounter(void);//interrupt to count pulse
+
+int main()
+{
+    TimeCounter.start();
+    pulseCount        = 0;
+    flowRate          = 0.0;
+    flowMilliLitres   = 0;
+    totalMilliLitres  = 0;
+    oldTime           = 0;
+
+    // The Hall-effect sensor is connected to pin 20
+    // Configured to trigger on a FALLING state change (transition from HIGH
+    // state to LOW state)
+    sensorPin.fall(&pulseCounter);
+
+    while(1) {
+        if((TimeCounter.read_ms() - oldTime) > 1000) {  // Only process counters once per second
+            // Disable the interrupt while calculating flow rate and sending the value to
+            // the host
+            __disable_irq();    // Disable Interrupts
+            flowRate = (1000.0 / (TimeCounter.read_ms() - oldTime) * pulseCount) / calibrationFactor;
+            oldTime = TimeCounter.read_ms();
+            flowMilliLitres = (flowRate / 60) * 1000;
+            totalMilliLitres += flowMilliLitres;
+
+
+            // Print the flow rate for this second in litres / minute
+            pc.printf("Flow rate: ");
+            pc.printf("%.1f",flowRate);
+            pc.printf("L/min");
+    
+            pc.printf("    Liquid Flowing: ");
+            pc.printf("%d",flowMilliLitres);
+            pc.printf("mL/Sec");
+
+            pc.printf("    Liquid Quantity: ");
+            pc.printf("%d",totalMilliLitres);
+            pc.printf("mL\n\r");
+
+            pulseCount = 0;
+
+            __enable_irq();     // Enable Interrupts
+
+
+        }
+    }
+}
+
+
+
+void pulseCounter()
+{
+    // Increment the pulse counter
+    pulseCount++;
+}
