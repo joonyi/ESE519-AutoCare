@@ -1,6 +1,13 @@
-# LIQUID FLOW METER
-Adafruit LIQUID FLOW METER - PLASTIC 1/2" NPS THREADED
+# ICU in a Bag - AutoCare
 
-The sensor comes with three wires: red (5-24VDC power), black (ground) and yellow (Hall effect pulse output). By counting the pulses from the output of the sensor, you can easily track fluid movement: each pulse is approximately 2.25 milliliters. Note this isn't a precision sensor, and the pulse rate does vary a bit depending on the flow rate, fluid pressure and sensor orientation. It will need careful calibration if better than 10% precision is required. However, its great for basic measurement tasks! 
+List of hardware in the system
+1. Arduino Mega 2560    
+2. Mbed LPC1786         
+3. Touch Screen 3.2'    
+4. Flow Rate Sensor    
+5. Heart Rate Sensor
 
-https://www.adafruit.com/products/828
+Heart rate sensor give information to Arduino which receives input from touch screen. From the heart rate information and input from the user, Arduino will communicate with mbed which will control the motor to move syringe automatically to give prescribed dosage. Flow rate sensor is a feedback to control the dosage.
+
+In short, the intervention device shall be able to communicate with microcontroller and give dosage with a set of rules program by the user.
+
